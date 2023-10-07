@@ -144,3 +144,4 @@ SIMPLE_JWT = {
 
 # Add CORS headers configuration to allow requests from frontend
 CORS_ALLOW_ALL_ORIGINS = True
+# AUTH_USER_MODEL = 'api.CustomUser'
