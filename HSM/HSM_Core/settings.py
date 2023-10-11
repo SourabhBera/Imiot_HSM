@@ -16,10 +16,6 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-import environ
-env = environ.Env()
-
-environ.Env.read_env()
 
 AUTH_USER_MODEL = 'api.Custom_User'
 
