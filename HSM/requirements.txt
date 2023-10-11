@@ -1,8 +1,0 @@
-dj-database-url              
-Django                        
-django-cors-headers           
-django-environ                
-djangorestframework           
-djangorestframework-simplejwt 
-gunicorn
-psycopg2-binary
