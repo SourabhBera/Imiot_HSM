@@ -4,9 +4,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions
-from .models import Department, Patient_Records
+from .models import Department, Patient_Records, Custom_User
 from .serializers import PatientRecordSerializer, DepartmentSerializer, UserSerializer
 from .permissions import IsDoctor, IsPatient
+from rest_framework.decorators import api_view
+
 class RegistrationView(APIView):
     def post(self, request):
         username = request.data.get('username')
@@ -57,20 +59,45 @@ class LogoutView(APIView):
     
 
 
-class DoctorsList(generics.ListAPIView):
-    queryset = User.objects.filter(groups__name='Doctors')
+class DoctorsList(generics.ListCreateAPIView):
+    queryset = Custom_User.objects.filter(groups__name='Doctors')
     serializer_class = UserSerializer
 
-class DoctorDetail(generics.RetrieveAPIView):
-    queryset = User.objects.filter(groups__name='Doctors')
+    def get_queryset(self):
+        return Custom_User.objects.filter(is_doctor=True)
+
+
+@api_view(['PUT', 'GET', 'DELETE'])
+def DoctorDetail(request, pk):
+    if request.method == 'GET':
+        query_data = Custom_User.objects.get(is_doctor=True, id=pk)
+        serailize = UserSerializer(query_data)
+        return Response(serailize.data)
+    
+    
+    if request.method == 'PUT':
+        query_data = Custom_User.objects.get(is_doctor=True, id=pk)
+        serializer = UserSerializer(query_data, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "User Updated Successfully",
+                             "data": serializer.data })
+    
+    if request.method == 'DELETE':
+        query_data = Custom_User.objects.get(is_doctor=True, id=pk)
+        query_data.delete()
+        return Response({"message": "User Deleted Successfully"})
+
+    return Response({"message": "User is not a Doctor."})
+class PatientsList(generics.ListCreateAPIView):
+    queryset = Custom_User.objects.filter(groups__name='Patients')
     serializer_class = UserSerializer
 
-class PatientsList(generics.ListAPIView):
-    queryset = User.objects.filter(groups__name='Patients')
-    serializer_class = UserSerializer
+    def get_queryset(self):
+        return Custom_User.objects.filter(is_doctor= False)
 
 class PatientDetail(generics.RetrieveAPIView):
-    queryset = User.objects.filter(groups__name='Patients')
+    queryset = Custom_User.objects.filter(groups__name='Patients')
     serializer_class = UserSerializer
 
 class DepartmentsList(generics.ListAPIView):
@@ -82,14 +109,14 @@ class DepartmentPatients(generics.ListAPIView):
 
     def get_queryset(self):
         department_id = self.kwargs['pk']
-        return User.objects.filter(groups__name='Patients', patientrecords__department_id=department_id)
+        return Custom_User.objects.filter(groups__name='Patients', patientrecords__department_id=department_id)
 
 class DepartmentDoctors(generics.ListAPIView):
     serializer_class = UserSerializer
 
     def get_queryset(self):
         department_id = self.kwargs['pk']
-        return User.objects.filter(groups__name='Doctors', doctorprofile__department_id=department_id)
+        return Custom_User.objects.filter(groups__name='Doctors', doctorprofile__department_id=department_id)
 
 class PatientRecordsList(generics.ListCreateAPIView):
     serializer_class = PatientRecordSerializer
@@ -105,3 +132,5 @@ class PatientRecordsDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Patient_Records.objects.all()
     serializer_class = PatientRecordSerializer
     permission_classes = [IsPatient]
+
+
