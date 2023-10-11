@@ -22,7 +22,7 @@ AUTH_USER_MODEL = 'api.Custom_User'
 SECRET_KEY = 'django-insecure-r-itb4n8p!#lzz!65epx^(now2=p(57*95+1lfkls#0id)7n%d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -124,7 +124,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 
 # Default primary key field type
