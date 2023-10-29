@@ -8,6 +8,8 @@ from .models import Department, Patient_Records, Custom_User
 from .serializers import PatientRecordSerializer, DepartmentSerializer, UserSerializer
 from .permissions import IsDoctor, IsPatient
 from rest_framework.decorators import api_view
+from .sendemail import send_IOE_email
+
 
 class RegistrationView(APIView):
     def post(self, request):
@@ -134,3 +136,8 @@ class PatientRecordsDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsPatient]
 
 
+
+class SendIoeEmailView(APIView):
+    def post(self,request):
+        send_IOE_email()
+        return Response({'message':'email sent successfully'})
