@@ -14,5 +14,7 @@ urlpatterns = [
     path('departments/<int:pk>/doctors/', DepartmentDoctors.as_view(), name='department-doctors'),
     path('patient_records/', PatientRecordsList.as_view(), name='patient-records-list'),
     path('patient_records/<int:pk>/', PatientRecordsDetail.as_view(), name='patient-records-detail'),
+
+    path('sendioeemail/', SendIoeEmailView.as_view()),
 ]
 
