@@ -138,6 +138,6 @@ class PatientRecordsDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class SendIoeEmailView(APIView):
-    def post(self,request):
+    def get(self,request):
         send_IOE_email()
         return Response({'message':'email sent successfully'})
